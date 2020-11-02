@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  US
+{% endblock %}
+
+{% block content %}
+  <div class="row top-buffer">
+    <div class="col">
+        <nav class="nav nav-pills flex-column flex-sm-row">
+            <a class="flex-sm-fill text-sm-center nav-link " href="{{ url_for('home') }}">Global</a>
+            <a class="flex-sm-fill text-sm-center nav-link active" href="{{ url_for('us') }}">US</a>
+        </nav>
+    </div>
+  </div>
+  <div class="row top-buffer" id="us">
+    <div class="col-4" >
+      <h3>For the month of March</h3>
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+              <a class="nav-link active" data-toggle="tab" href="#confirmed_list">Confirmed</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#deaths_list">Deaths</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="myPillContent">
+            <div class="tab-pane fade show active" id="confirmed_list" role="tabpanel">
+              <div class="text-primary text-center h1" id = "confirmed_total" style="background-color: rgba(0, 4, 255, 0.109);">
+              </div>
+              <ul class="list-group h5"  id="confirmed_list_items" style="height: 450px; overflow-y: scroll;">
+              </ul>
+            </div>
+
+            <div class="tab-pane fade" id="deaths_list" role="tabpanel">
+              <div class="text-danger text-center h1" id = "deaths_total" style="background-color: rgba(255, 0, 13, 0.109);">
+              </div>
+              <ul class="list-group h5"  id="deaths_list_items" style="height: 450px; overflow-y: scroll;">
+              </ul>
+            </div>
+
+          </div>
+    </div>
+    <div class="col-8">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="home-tab" data-toggle="tab" href="#confirmed" role="tab" aria-controls="confirmed"
+                aria-selected="true">Comfirmed</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="contact-tab" data-toggle="tab" href="#deaths" role="tab" aria-controls="deaths"
+                aria-selected="false">Deaths</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#trend" role="tab"
+                aria-selected="false">Trend</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#daily_trend" role="tab"
+                aria-selected="false">Daily Trend</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="confirmed" role="tabpanel" aria-labelledby="home-tab">
+            </div>
+            <div class="tab-pane fade" id="deaths" role="tabpanel" aria-labelledby="contact-tab">
+            </div>
+            <div class="tab-pane fade" id="trend" role="tabpanel" aria-labelledby="contact-tab">
+            </div>
+            <div class="tab-pane fade" id="daily_trend" role="tabpanel" aria-labelledby="contact-tab">
+            </div>
+          </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+
+  <script>
+    var fig = {{ data["confirmed_animation"]|safe }};
+    Plotly.newPlot('confirmed', fig, {});
+
+    fig = {{ data["deaths_animation"]|safe }};
+    Plotly.newPlot('deaths', fig, {});
+
+    var lists = {{ lists|safe }};
+
+    for (var key in lists) {
+      document.getElementById(key+"_total").innerHTML = (lists[key]['total']).toLocaleString(); 
+      document.getElementById(key+"_list_items").innerHTML = lists[key]['list'];
+    }
+
+    fig = {{ trend|safe }};
+    Plotly.newPlot('trend', fig, {});
+
+    fig = {{ daily_trend|safe }};
+    Plotly.newPlot('daily_trend', fig, {});
+
+  </script>
+
+{% endblock %}
